@@ -1,0 +1,16 @@
+{
+    "contents" : "corr <- function(directory, threshold = 0) {\n  ## 'directory' is a character vector of length 1 indicating\n  ## the location of the CSV files\n  \n  ## 'threshold' is a numeric vector of length 1 indicating the\n  ## number of completely observed observations (on all\n  ## variables) required to compute the correlation between\n  ## nitrate and sulfate; the default is 0\n  data.nobs <- complete(directory)\n  ## Return a numeric vector of correlations\n  id <- as.numeric(data.nobs[data.nobs$nobs > threshold,\"id\"])\n  \n  file.names <- list.files(directory)[id]\n  \n  data <- lapply(file.names,function(x) read.csv(paste(directory,x,sep = \"/\")))\n  names(data) <- id\n  \n  result <- unlist(lapply(data,function(x) cor(x[complete.cases(x),\"nitrate\"],x[complete.cases(x),\"sulfate\"])))\n  return(result)\n}",
+    "created" : 1417562199449.000,
+    "dirty" : false,
+    "encoding" : "CP936",
+    "folds" : "",
+    "hash" : "4158648601",
+    "id" : "A58BA65D",
+    "lastKnownWriteTime" : 1417562708,
+    "path" : "G:/Coursera/Data Science/Github/Coursera_Data_Science/R_Programming/Assignment1/corr.R",
+    "project_path" : "corr.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
