@@ -1,0 +1,17 @@
+{
+    "contents" : "outcome <- read.csv(\"outcome-of-care-measures.csv\", colClasses = \"character\")\nhead(outcome)\noutcome[, 11] <- as.numeric(outcome[, 11])\n## You may get a warning about NAs being introduced; that is okay\nhist(outcome[, 11])\ndim(outcome)\n",
+    "created" : 1417564192455.000,
+    "dirty" : false,
+    "encoding" : "CP936",
+    "folds" : "",
+    "hash" : "2498418421",
+    "id" : "ED4EBF81",
+    "lastKnownWriteTime" : 1417564355,
+    "path" : "G:/Coursera/Data Science/Github/Coursera_Data_Science/R_Programming/Assignment3/Test.R",
+    "project_path" : "Test.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
