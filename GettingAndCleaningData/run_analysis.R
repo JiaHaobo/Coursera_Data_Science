@@ -123,6 +123,12 @@ rm(activity);gc()
 dataset[,':='(y=NULL,set_type=NULL)]
 colnm <- gsub("-","_",colnames(dataset))
 colnm <- gsub("[:():]","",colnm)
+colnm <- gsub("^t", "Time", colnm)
+colnm <- gsub("^f", "Frequency", colnm)
+colnm <- gsub("Acc", "Acceleration", colnm)
+colnm <- gsub("Gyro", "Gyroscopic", colnm)
+colnm <- gsub("Mag", "Magnitude", colnm)
+colnm <- gsub("BodyBody", "Body", colnm)
 setnames(dataset,colnm)
 ###############################################################################
 
@@ -132,7 +138,7 @@ setnames(dataset,colnm)
 # with the average of each variable for each activity and each subject.
 ###############################################################################
 dataset <- dataset[,lapply(.SD,as.numeric),by=.(activity)]
-tidyset <- dataset[,lapply(.SD,mean),by=.(subject,activity)]
-write.table(tidyset,file="tidydataset.txt",row.name=FALSE)
+averagedataset <- dataset[,lapply(.SD,mean),by=.(subject,activity)]
+write.table(averagedataset,file="averagedataset.txt",row.name=FALSE,sep = ",")
 ###############################################################################
 
