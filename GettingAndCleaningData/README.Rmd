@@ -1,31 +1,108 @@
-###############################################################################
-# Codes for Coursera Project: Getting and Cleaning Data
-# Author: Haobo Jia
-# Date: 2014-12-08
-# Work on data set: UCI-HAR-Dataset
-###############################################################################
-# TASKS:
-# 1. Merges the training and the test sets to create one data set.
-# 2. Extracts only the measurements on the mean and standard deviation 
-# for each measurement.
-# 3. Uses descriptive activity names to name the activities in the data set
-# 4. Appropriately labels the data set with descriptive variable names. 
-# 5. From the data set in step 4, creates a second, independent tidy data set 
-# with the average of each variable for each activity and each subject.
-###############################################################################
+---
+title: "Getting and Cleaning Data Coursera Project"
+author: "Jia Haobo"
+date: "Friday, December 12, 2014"
+output: html_document
+---
 
+### Project and Source Data Description
+The purpose of this project is to demonstrate your ability to collect, work with, and clean a data set. The goal is to prepare tidy data that can be used for later analysis. You will be graded by your peers on a series of yes/no questions related to the project. You will be required to submit: 
+
+1. A tidy data set as described below.
+2. A link to a Github repository with your script for performing the analysis.
+3. A code book that describes the variables, the data, and any transformations or work that you performed to clean up the data called **CodeBook.md**. You should also include a **README.md** in the repo with your scripts. This repo explains how all of the scripts work and how they are connected.  
+
+One of the most exciting areas in all of data science right now is wearable computing - see for example this article . Companies like Fitbit, Nike, and Jawbone Up are racing to develop the most advanced algorithms to attract new users. The data linked to from the course website represent data collected from the accelerometers from the Samsung Galaxy S smartphone.
+
+A full description is available at the site where the data was obtained: 
+http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones 
+
+Here are the data for the project:
+https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip 
+
+You should create one R script called run_analysis.R that does the following.
+
+1. Merges the training and the test sets to create one data set.
+2. Extracts only the measurements on the mean and standard deviation for each measurement. 
+3. Uses descriptive activity names to name the activities in the data set
+4. Appropriately labels the data set with descriptive variable names. 
+5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+
+### Methodology
+In this project, I mainly use **data.table** package in **R** to clean the raw data and execute the analysis automatically.
+All these processed can be done by running the R script **_run\_analysis.R_**.
+
+#### Working Environment
+* OS: Microsoft Windows Version 6.1.7601
+* Platform: x86_64-w64-mingw32/x64 (64-bit)
+* R: Version 3.1.2 (2014-10-31) -- "Pumpkin Helmet"
+* Rstudio: Version 0.98.1091
+* Package: data.table version 1.9.4
+
+#### Input Data Set: Raw Data
+**UCI-HAR-Dataset**
+
+* test
+    + Inertial Signals
+        + body\_acc_x_test.txt
+        + body\_acc_y_test.txt
+        + body\_acc_z_test.txt
+        + body\_gyro_x_test.txt
+        + body\_gyro_y_test.txt
+        + body\_gyro_z_test.txt
+        + total\_acc_x_test.txt
+        + total\_acc_y_test.txt
+        + total\_acc_z_test.txt
+    + subject_test.txt
+    + X_test.txt
+    + y_test.txt
+
+* train
+    + Inertial Signals
+        + body\_acc_x_train.txt
+        + body\_acc_y_train.txt
+        + body\_acc_z_train.txt
+        + body\_gyro_x_train.txt
+        + body\_gyro_y_train.txt
+        + body\_gyro_z_train.txt
+        + total\_acc_x_train.txt
+        + total\_acc_y_train.txt
+        + total\_acc_z_train.txt
+    + subject_train.txt
+    + X_train.txt
+    + y_train.txt
+* activity_labels.txt
+* features.txt
+* features.info.txt
+* README.txt
+
+#### Script For Data Processing
+**run\_analysis.R**: This R script starts the analysis form reading data from raw data set, and then cleaning the data and produce the tidy data set. The data analysis can be reproduced completely by re-running this script.
+
+#### Output File
+**averagedataset.txt**: This is a tidy data set with the average of each variable for each activity and each subject. All the variables are descriptive.
+
+### Data Processing
+1. Download the Rawdata.
+2. Put the Rscript **run\_analysis.R** and the Rawdata set in the same directory.
+3. Run Rscrip **run\_analysis.R** and find the tiny data set **averagedataset.txt** in the same directory.
+
+Following are how Rscript works step by step.
+
+#### Step 0: Pre-settings
+* Load packages and set data directory.
+```{r eval=FALSE,result="hide"}
 ###############################################################################
 # load packages
 library(data.table)
 ###############################################################################
-
-###############################################################################
 # set data path
-# path.rawdata <- "g:/Coursera/Data Science/Github/RawData/UCI-HAR-Dataset/"
-# set path.rawdata = "", when the dataset in the same directory
+# set path.rawdata = "", when the Raw dataset is in the working directory
 path.rawdata <- ""
 ###############################################################################
-
+```
+* Get variable names
+```{r eval=FALSE, result="hide", message=FALSE, warning=FALSE}
 ###############################################################################
 # get variable names from "features.txt"
 raw.variable <- read.csv(paste0(path.rawdata,"features.txt"),
@@ -34,7 +111,9 @@ variable <- data.table(variable=sapply(raw.variable[,1],
                                        function(x) unlist(strsplit(x, split=" "))[2]))
 rm(raw.variable);gc()
 ###############################################################################
-
+```
+* Functions for variable splitting
+```{r eval=FALSE, result="hide", message=FALSE, warning=FALSE}
 ###############################################################################
 # function for cleaning the data
 splitvar <- function(x)
@@ -43,7 +122,10 @@ splitvar <- function(x)
   return(tmp[tmp!=""])
 }
 ###############################################################################
+```
 
+#### Step 1: Merges the training and the test sets to create one data set.
+```{r eval=FALSE, result="hide", message=FALSE, warning=FALSE}
 ###############################################################################
 ## Step 1
 # Merges the training and the test sets to create one data set.
@@ -90,7 +172,10 @@ rm(test_subject,test_y);gc()
 raw.dataset <- rbind(train,test)
 rm(train,test,splitvar,path.rawdata);gc()
 ###############################################################################
+```
 
+#### Step 2: Extracts only the measurements on the mean and standard deviation for each measurement. 
+```{r eval=FALSE, result="hide", message=FALSE, warning=FALSE}
 ###############################################################################
 ## Step 2
 # Extracts only the measurements on the mean and standard deviation for each
@@ -103,7 +188,10 @@ subset <- variable[sort(union(submean,substd))]
 dataset <- raw.dataset[,c(subset$variable,"y","subject","set_type"),with=FALSE]
 rm(raw.dataset,subset,submean,substd,variable);gc()
 ###############################################################################
+```
 
+#### Step 3: Uses descriptive activity names to name the activities in the data set
+```{r eval=FALSE, result="hide", message=FALSE, warning=FALSE}
 ###############################################################################
 ## Step 3
 # Uses descriptive activity names to name the activities in the data set
@@ -115,7 +203,10 @@ activity <- data.table(number=1:6,
 dataset[,activity:=activity[dataset$y,]$activity]
 rm(activity);gc()
 ###############################################################################
+```
 
+#### Step 4: Appropriately labels the data set with descriptive variable names. 
+```{r eval=FALSE, result="hide", message=FALSE, warning=FALSE}
 ###############################################################################
 ## Step 4
 # Appropriately labels the data set with descriptive variable names.
@@ -131,7 +222,10 @@ colnm <- gsub("Mag", "Magnitude", colnm)
 colnm <- gsub("BodyBody", "Body", colnm)
 setnames(dataset,colnm)
 ###############################################################################
+```
 
+#### Step 5: Tidy data set with the average of each variable for each activity and each subject.
+```{r eval=FALSE, result="hide", message=FALSE, warning=FALSE}
 ###############################################################################
 ## Step 5
 # From the data set in step 4, creates a second, independent tidy data set
@@ -139,7 +233,12 @@ setnames(dataset,colnm)
 ###############################################################################
 dataset <- dataset[,lapply(.SD,as.numeric),by=.(activity)]
 averagedataset <- dataset[,lapply(.SD,mean),by=.(subject,activity)]
-colnames(averagedataset)[-(1:2)] <- paste0("Average",colnames(averagedataset)[-(1:2)])
 write.table(averagedataset,file="averagedataset.txt",row.name=FALSE,sep = ",")
 ###############################################################################
+```
+#### The final output
+the tiny data set **averagedataset.txt** is a comma separated file with txt extension.
 
+|Tidy Dataset         | rows | columns |
+|---------------------|------|---------|
+| averagedataset      | 180  | 68      | 
